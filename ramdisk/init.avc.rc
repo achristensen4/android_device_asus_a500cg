@@ -55,7 +55,6 @@ service ad_proxy /system/xbin/ad_proxy
     class core
     user root
     group system cache misc audio
-    disabled
 
 on property:service.ad_proxy.enable=0
     stop ad_proxy
