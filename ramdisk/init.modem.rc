@@ -80,13 +80,13 @@ service ril-daemon2 /system/bin/rild -l /system/lib/librapid-ril-core.so -c 2
     group radio cache inet misc audio
     
 
-#service ril-daemon /system/bin/rild \
-#    -l /system/lib/libxgold-ril.so -- -d /dev/ttyGSM1
-#    socket rild stream 660 root radio
-#    socket rild-debug stream 660 radio system
-#    user root
-#    group system dhcp radio cache inet misc
-#    oneshot
+service ril-daemon /system/bin/rild
+-l /system/lib/libxgold-ril.so -- -d /dev/ttyGSM1
+socket rild stream 660 root radio
+socket rild-debug stream 660 radio system
+user root
+group system dhcp radio cache inet misc
+oneshot
 
 # MTS SERVICES
 
@@ -95,20 +95,17 @@ service pti_sigusr1 /system/bin/pti_sigusr1
     user radio
     group radio
     oneshot
-    disabled
 
 # mts persistent
 service mtsp /system/bin/mts
     user system
     group radio log media_rw sdcard_rw inet
-    disabled
 
 # mts oneshot
 service mtso /system/bin/mts
     user system
     group radio log media_rw sdcard_rw inet
     oneshot
-    disabled
 
 # AT proxy service
 service proxy /system/bin/proxy -d /dev/gsmtty1 -m /dev/gsmtty10
@@ -116,20 +113,17 @@ service proxy /system/bin/proxy -d /dev/gsmtty1 -m /dev/gsmtty10
     class main
     user radio
     group radio system cache inet misc
-    disabled
 
 # AT proxy tunneling mode service
 service proxy-tunneling /system/bin/proxy -d /dev/gsmtty1 -m /dev/gsmtty10 -t on
     class main
     user radio
     group radio system cache inet misc
-    disabled
 
 # AT proxy USB reset utility service
 service atproxy_usbreset /system/bin/atproxy_usbreset
     oneshot
     user radio
-    disabled
 
 on property:persist.radio.multisim.config=dsds
     start ril-daemon
