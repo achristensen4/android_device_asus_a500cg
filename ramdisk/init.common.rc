@@ -65,20 +65,20 @@ on init
     symlink /storage/USBdisk5 /Removable/USBdisk5
 
 on boot
-#    chown system system /dev/pvr_sync
-#    chmod 666 /dev/pvr_sync
+chown system system /dev/pvr_sync
+chmod 666 /dev/pvr_sync
 
-#   chown system system /dev/dri/card0
-#   chmod 0666 /dev/dri/card0
-#   symlink /dev/dri/card0 /dev/card0
+chown system system /dev/dri/card0
+chmod 0666 /dev/dri/card0
+symlink /dev/dri/card0 /dev/card0
 
     # IMG Graphics specific setup. See also "service pvrsrvctl"
     # The permissions below should be tighter.
-#    chown system system /dev/card0
+    chown system system /dev/card0
     chown system system /sys/class/backlight/psb-bl/brightness
     chown system system /sys/class/backlight/psb-bl/max_brightness
     chown system system /sys/class/backlight/psb-bl/actual_brightness
- #   chmod 0666 /dev/card0
+    chmod 0666 /dev/card0
     chmod 0664 /sys/class/backlight/psb-bl/brightness
     chmod 0664 /sys/class/backlight/psb-bl/max_brightness
     chmod 0664 /sys/class/backlight/psb-bl/actual_brightness
@@ -94,7 +94,7 @@ on boot
      write /proc/sys/net/core/wmem_max 1048576
 
     #Set freezing timeout value as 2000ms
-    write /sys/power/pm_freeze_timeout 2000
+    write /sys/power/pm_freeze_timeout 0
 
     #enable kernel compaction
     write /proc/sys/vm/compact_memory 1
@@ -133,39 +133,27 @@ on post-fs
 # Performance tweaks for interactive governor
     chown system system /sys/devices/system/cpu/cpufreq/interactive/timer_rate
     chown system system /sys/devices/system/cpu/cpufreq/interactive/go_hispeed_load
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/boostpulse
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/touchboostpulse
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/touchboostpulse_duration
-    chown system system /sys/devices/system/cpu/cpufreq/interactive/touchboost_freq
-    chmod 0220 /sys/devices/system/cpu/cpufreq/interactive/touchboostpulse
-    chmod 0220 /sys/devices/system/cpu/cpufreq/interactive/boostpulse
 
 service sdcard /system/bin/sdcard -u 1023 -g 1023 -l /data/media /mnt/shell/emulated
-    class late_start
+    class main
 
 service fuse_MicroSD /system/bin/sdcard -u 1023 -g 1023 -w 1023 -d /mnt/media_rw/MicroSD /storage/MicroSD
-    class late_start
-    disabled
+    class main
 
 service fuse_USBdisk1 /system/bin/sdcard -u 1023 -g 1023 -w 1023 -d /mnt/media_rw/USBdisk1 /storage/USBdisk1
-    class late_start
-    disabled
+    class main
 
 service fuse_USBdisk2 /system/bin/sdcard -u 1023 -g 1023 -w 1023 -d /mnt/media_rw/USBdisk2 /storage/USBdisk2
-    class late_start
-    disabled
+    class main
 
 service fuse_USBdisk3 /system/bin/sdcard -u 1023 -g 1023 -w 1023 -d /mnt/media_rw/USBdisk3 /storage/USBdisk3
-    class late_start
-    disabled
+    class main
 
 service fuse_USBdisk4 /system/bin/sdcard -u 1023 -g 1023 -w 1023 -d /mnt/media_rw/USBdisk4 /storage/USBdisk4
-    class late_start
-    disabled
+    class main
 
 service fuse_USBdisk5 /system/bin/sdcard -u 1023 -g 1023 -w 1023 -d /mnt/media_rw/USBdisk5 /storage/USBdisk5
-    class late_start
-    disabled
+    class main
 
 
 
@@ -187,7 +175,7 @@ on post-fs-data
     setprop ro.camera.sound.forced 0
 
     # Set this property to avoid fm rx to be muted
-    setprop ro.fmrx.sound.forced 1
+    setprop ro.fmrx.sound.forced 0
 
     # Set this property to enable Thermal service
     setprop persist.service.thermal 1
@@ -254,13 +242,11 @@ on charger
 service thermald /sbin/thermald
     class core
     oneshot
-    disabled
     user root
 
 service bcu_cpufreqrel /system/bin/bcu_cpufreqrel
     group system
     oneshot
-    disabled
 
 service pvrsrvctl /system/vendor/bin/pvrsrvctl --no-module --start
     class core
@@ -277,11 +263,10 @@ service charger_app /charger
     user root
 
 service logbackup /system/bin/sh /system/etc/packlogs.sh
-    class late_start
+    class main
     user root
     group sdcard_rw
     oneshot
-    disabled
     seclabel u:r:logbackup:s0
 
 # Enable native bridge for target executables
@@ -324,7 +309,6 @@ on property:sys.shutdown.requested=1bootloader
 service bugreport /system/bin/dumpstate -d -p -B \
         -o /data/data/com.android.shell/files/bugreports/bugreport
     class main
-    disabled
     oneshot
     keycodes 114 115 116
 
