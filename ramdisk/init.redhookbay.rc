@@ -7,7 +7,7 @@ import init.wireless.rc
 import init.modem.rc
 import init.config_init.rc
 import init.wifi.rc
-#import init.widi.rc
+import init.widi.rc
 import init.a500cg.usb.rc
 import init.wl128x.rc
 import init.gps.rc
@@ -134,19 +134,19 @@ on post-fs-data
     mkdir /data/misc/firmware 0770 system system
 
     #Invoke fuel gauging helper binary to restore config data
-    #chmod 0770 /dev/max170xx
-    #chown system system /dev/max170xx
-    #symlink /dev/max170xx /dev/fg
-    #chown system system /sys/class/power_supply/max17047_battery/model_name
-    #chown system system /sys/class/power_supply/max17047_battery/serial_number
-    #marked by chih-hsuan chang
+    chmod 0770 /dev/max170xx
+    chown system system /dev/max170xx
+    symlink /dev/max170xx /dev/fg
+    chown system system /sys/class/power_supply/max17047_battery/model_name
+    chown system system /sys/class/power_supply/max17047_battery/serial_number
+    marked by chih-hsuan chang
     
-    #mkdir /data/logs 0770 system log
-    #symlink /data/logs /logs
+    mkdir /data/logs 0770 system log
+    symlink /data/logs /logs
     mkdir /data/logs
     chown system log /data/logs
     chmod 0770 /data/logs
-    #start fg_conf
+    start fg_conf
 
 on post-fs
 #  Permissions for Thermal Management
@@ -488,12 +488,12 @@ on post-fs
     chown system system /sys/bus/i2c/devices/5-006a/enable
 
 	# For APD
-#    mount ext4 /dev/block/by-name/ADF /ADF rw noatime context=u:object_r:demoapp_file:s0
+mount ext4 /dev/block/by-name/ADF /ADF rw noatime context=u:object_r:demoapp_file:s0
 
-#    chown system system /ADF
-#    chown system system /APD
-#    chmod 0775 /ADF
-#    chmod 0775 /APD
+chown system system /ADF
+chown system system /APD
+chmod 0775 /ADF
+chmod 0775 /APD
 
 # Permissions for LED
     chown system system /sys/class/leds/intel_keypad_led/brightness
@@ -545,10 +545,9 @@ on property:persist.asus.dclick=1
     write /sys/devices/pci0000:00/0000:00:00.3/i2c-0/0-0020/input/input1/dclick_mode 1
     write /sys/android_touch/dclick_mode 1	
 	
-#service fg_conf /system/bin/fg_conf -w
-    #group system
-    #oneshot
-    #disabled
+service fg_conf /system/bin/fg_conf -w
+group system
+oneshot
 #marked by chih-hsuan chang
 
 on property:ro.debuggable=1
@@ -575,16 +574,16 @@ on property:sys.boot_completed=1
     chown system system /sys/class/thermal/cooling_device2/cur_state
 
 # ASUS Product Demo
-#on property:persist.sys.enableAPD=1
-# #   mount ext4 /dev/block/by-name/APD /APD rw noatime context=u:object_r:demoapp_file:s0
-# ##   chown system system /APD
-#    chmod 0775 /APD
+on property:persist.sys.enableAPD=1
+mount ext4 /dev/block/by-name/APD /APD rw noatime context=u:object_r:demoapp_file:s0
+chown system system /APD
+chmod 0775 /APD
 
 on charger
     start upi_ug31xx
 
-    mount ext4 /dev/block/by-name/system /system ro noatime barrier=1,data=ordered
-    mount ext4 /dev/block/by-name/logs /logs nosuid nodev barrier=1,data=ordered
+    mount ext4 /dev/block/by-name/system /system rw noatime barrier=1
+    mount ext4 /dev/block/by-name/logs /logs nosuid nodev barrier=1
 
     start watchdogd
     insmod /lib/modules/rmi4.ko boot_mode=1
@@ -603,10 +602,10 @@ on charger
     insmod /lib/modules/atomisp-css2300.ko
 
     # Invoke fuel gauging helper binary to restore config data
-    #symlink /dev/max170xx /dev/fg
-    #chmod 0775 /dev/fg
-    #wait /system/bin/fg_conf
-    #start fg_conf
+    symlink /dev/max170xx /dev/fg
+    chmod 0775 /dev/fg
+    wait /system/bin/fg_conf
+    start fg_conf
     #marked by chih-hsuan chang
 
 service upi_ug31xx /system/bin/upi_ug31xx
@@ -615,7 +614,7 @@ service upi_ug31xx /system/bin/upi_ug31xx
     group system
     seclabel u:r:gauge:s0
 
-#service dpst /system/bin/dpstmgr
-#    class main
-#    user system
-#    group system
+service dpst /system/bin/dpstmgr
+class main
+user system
+group system
