@@ -1,20 +1,17 @@
 
 service init_factorylog /system/bin/sh /system/etc/init_factorylogtool.sh
-    disabled
     oneshot
 
 service init_logdate /system/bin/logcontrol logdumps date
-    disabled
     seclable u:r:logtoold:s0
     oneshot
 
 
 service initfacmodem /system/bin/modemfaclog
     class main
-    disabled
 
-#on post-fs-data
-#   start init_logdate
+on post-fs-data
+start init_logdate
 on property:persist.asuslog.set.date=1
     start init_logdate
 
@@ -33,38 +30,31 @@ on property:persist.asuslog.fac.init=1
 service logMain /system/bin/logcontrol logdumps main
     class main
     seclable u:r:logtoold:s0
-    disabled
 
 service logProcrank /system/bin/logcontrol logdumps procrank
     class main
     seclable u:r:logtoold:s0
-    disabled
     oneshot 
 
 service logKernel /system/bin/logcontrol logdumps kernel
     class main
     seclable u:r:logtoold:s0
-    disabled
 
 service logRadio /system/bin/logcontrol logdumps radio
     class main
     seclable u:r:logtoold:s0
-    disabled
 
 service logEvent /system/bin/logcontrol logdumps event
     class main
     seclable u:r:logtoold:s0
-    disabled
 
 service logCombine /system/bin/logcontrol logdumps combine
     class main
     seclable u:r:logtoold:s0
-    disabled
 
 service logTcpdump /system/bin/logcontrol logdumps tcpdump
     class main
     seclable u:r:logtoold:s0
-    disabled
 
 on property:persist.asuslog.main.enable=1
     start logMain
@@ -107,25 +97,21 @@ on property:persist.asuslog.tcpdump.enable=0
 service fdcmts /system/bin/fdcmts
     class main
     seclable u:r:logtoold:s0
-    disabled
 
 #fdc_mts2
 service fdcmts2 /system/bin/fdcmts -m 2
     class main
     seclable u:r:logtoold:s0
-    disabled
 
 service fdcmdm1 /system/bin/logcontrol fdcmdm slot1
     class main
     seclable u:r:logtoold:s0
     socket fdcmdm1 stream 0660 system system
-    disabled
 
 service fdcmdm2 /system/bin/logcontrol fdcmdm slot2
     class main
     seclable u:r:logtoold:s0
     socket fdcmdm2 stream 0660 system system
-    disabled
 
 
 on property:persist.asuslog.modem1.enable=1
@@ -174,7 +160,6 @@ service toolcommand /system/bin/toolcommand
     user root
     group root
    seclable u:r:fdctool:s0
-   disabled
    oneshot
 
 
@@ -184,7 +169,6 @@ service toolconnect /system/bin/toolconnect
     user root
     group root
    socket toolconnect stream 0660 system system
-   disabled
 
 
 on property:persist.asuslog.tool.enable=1
@@ -197,19 +181,17 @@ on property:persist.asuslog.tool.enable=0
 #logcommand
 service logcommand /system/bin/logcommand
     class main
-    disabled
     seclable u:r:logtoold:s0
     oneshot
 
 
 service crashlog_config /system/bin/logcontrol crashlogd
-     class late_start
+     class main
      user system
      group system
      oneshot
 
 service crashlogd /system/bin/crashlogd
-    disabled
 
 on property:persist.asuslog.fdc_crashlog=0
    stop crashlogd
