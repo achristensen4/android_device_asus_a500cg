@@ -1,8 +1,8 @@
 # Enable by default android java wakelock logging
 on init
-    #mkdir /logs
+    mkdir /logs
     symlink /data/logs /logs
-    write /proc/sys/kernel/kptr_restrict 2
+    write /proc/sys/kernel/kptr_restrict 0
 
 on early-boot
     chown system log /logs
@@ -28,14 +28,13 @@ on ramconsole
     powerctl reboot
 
 # crash and log services
-#service crashlogd /system/bin/crashmonitor
-#    class late_start
-#    user system
-#    group system log radio
+service crashlogd /system/bin/crashmonitor
+class main
+user system
+group system log radio
 
 # LogConfig service
 service logconfig /system/bin/logconfig
     class main
     socket logconfig stream 0660 root system
-    disabled
     oneshot
